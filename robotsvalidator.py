@@ -96,10 +96,10 @@ class RobotsTXT(object):
                     content = line.lstrip("#").strip()
                     self.entries.append({"type": "commentary", "content": content, "raw": line})
                 elif line.lower().startswith("disallow"):
-                    content = line.split(':', 1)[1].lstrip()
+                    content = line.split(':', 1)[1].strip()
                     self.entries.append({"type": "disallow", "content": content, "raw": line})
                 elif line.lower().startswith("allow"):
-                    content = line.split(':', 1)[1].lstrip()
+                    content = line.split(':', 1)[1].strip()
                     self.entries.append({"type": "allow", "content": content, "raw": line})
 
     def _to_re_regex(self, data):
@@ -139,6 +139,8 @@ class RobotsTXT(object):
 
 
 def parseArgs():
+    print("CodeIgniter-session-unsign v1.1 - by @podalirius_\n")
+
     parser = argparse.ArgumentParser(description="Description message")
     parser.add_argument("--debug", dest="debug", action="store_true", default=False, help="Debug mode.")
     parser.add_argument("--no-colors", dest="no_colors", action="store_true", default=False, help="No colors mode.")
@@ -167,7 +169,7 @@ if __name__ == '__main__':
         logger.debug("Reading file '%s' ..." % options.robots_file)
         if os.path.exists(options.robots_file):
             f = open(options.robots_file, 'r')
-            robotsdata = f.read()
+            robotsdata = f.read().replace('\r', '')
             f.close()
             logger.debug("Read %d bytes." % (len(robotsdata)))
         else:
@@ -177,7 +179,7 @@ if __name__ == '__main__':
         logger.debug("Querying '%s' ..." % options.robots_url)
         r = requests.get(options.robots_url)
         if r.status_code == 200:
-            robotsdata = r.content.decode("UTF-8")
+            robotsdata = r.content.decode("UTF-8").replace('\r', '')
             logger.debug("HTTP %d response: %d bytes returned." % (r.status_code, len(r.content)))
         else:
             logger.error("Access to '%s' returned a %d status code." % (options.robots_url, r.status_code))
@@ -194,13 +196,19 @@ if __name__ == '__main__':
                 l_allow, l_disallow = robotstxt.validate(url)
                 if len(l_allow) == 0 and len(l_disallow) == 0:
                     logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
-                    len(l_allow), len(l_disallow)))
+                            len(l_allow), len(l_disallow)
+                        )
+                    )
                 elif len(l_allow) != 0:
                     logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
-                    len(l_allow), len(l_disallow)))
+                            len(l_allow), len(l_disallow)
+                        )
+                    )
                 elif len(l_disallow) != 0:
                     logger.print("\x1b[1;91mNot allowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
-                    len(l_allow), len(l_disallow)))
+                            len(l_allow), len(l_disallow)
+                        )
+                    )
 
                 for rule in l_allow:
                     logger.print(" | Rule '%s'" % rule["raw"])
