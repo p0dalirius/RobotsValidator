@@ -11,8 +11,13 @@ import argparse
 import re
 import os
 import sys
-
+import readline
 import requests
+import urllib.parse
+
+
+readline.parse_and_bind('tab: complete')
+readline.set_completer_delims('\n')
 
 
 class Logger(object):
@@ -152,6 +157,7 @@ def parseArgs():
 
     return options
 
+
 if __name__ == '__main__':
     options = parseArgs()
     logger = Logger(debug=options.debug, nocolors=options.no_colors, logfile=options.logfile)
@@ -177,9 +183,11 @@ if __name__ == '__main__':
 
     robotstxt = RobotsTXT(robotsdata, logger=logger)
 
+    prompt = "[%s]> " % urllib.parse.urlparse(options.robots_url).netloc
+
     try:
         while True:
-            url = input("> ")
+            url = input(prompt)
             if len(url) != 0:
                 l_allow, l_disallow = robotstxt.validate(url)
                 if len(l_allow) == 0 and len(l_disallow) == 0:
