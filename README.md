@@ -1,4 +1,4 @@
-# robotsvalidator
+# RobotsValidator
 
 <p align="center">
   The robotsvalidator script allows you to check if URLs are allowed or disallowed by a robots.txt file.
