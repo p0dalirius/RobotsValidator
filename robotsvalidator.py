@@ -15,7 +15,6 @@ import readline
 import requests
 import urllib.parse
 
-
 readline.parse_and_bind('tab: complete')
 readline.set_completer_delims('\n')
 
@@ -147,7 +146,8 @@ def parseArgs():
 
     parse_robots_source = parser.add_mutually_exclusive_group()
     parse_robots_source.add_argument("-r", "--robots-file", dest="robots_file", default=None, help='robots.txt file')
-    parse_robots_source.add_argument("-R", "--robots-url", dest="robots_url", default=None, help='robots.txt location URL.')
+    parse_robots_source.add_argument("-R", "--robots-url", dest="robots_url", default=None,
+                                     help='robots.txt location URL.')
 
     options = parser.parse_args()
 
@@ -172,6 +172,7 @@ if __name__ == '__main__':
             logger.debug("Read %d bytes." % (len(robotsdata)))
         else:
             logger.error("File '%s' does not exists or is not readable." % options.robots_file)
+            sys.exit()
     elif options.robots_url is not None:
         logger.debug("Querying '%s' ..." % options.robots_url)
         r = requests.get(options.robots_url)
@@ -180,6 +181,7 @@ if __name__ == '__main__':
             logger.debug("HTTP %d response: %d bytes returned." % (r.status_code, len(r.content)))
         else:
             logger.error("Access to '%s' returned a %d status code." % (options.robots_url, r.status_code))
+            sys.exit()
 
     robotstxt = RobotsTXT(robotsdata, logger=logger)
 
@@ -191,11 +193,14 @@ if __name__ == '__main__':
             if len(url) != 0:
                 l_allow, l_disallow = robotstxt.validate(url)
                 if len(l_allow) == 0 and len(l_disallow) == 0:
-                    logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)"  % (len(l_allow), len(l_disallow)))
+                    logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
+                    len(l_allow), len(l_disallow)))
                 elif len(l_allow) != 0:
-                    logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)"  % (len(l_allow), len(l_disallow)))
+                    logger.print("\x1b[1;92mAllowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
+                    len(l_allow), len(l_disallow)))
                 elif len(l_disallow) != 0:
-                    logger.print("\x1b[1;91mNot allowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)"  % (len(l_allow), len(l_disallow)))
+                    logger.print("\x1b[1;91mNot allowed by robots.txt!\x1b[0m (allow:%d, disallow:%d)" % (
+                    len(l_allow), len(l_disallow)))
 
                 for rule in l_allow:
                     logger.print(" | Rule '%s'" % rule["raw"])
@@ -204,4 +209,3 @@ if __name__ == '__main__':
     except KeyboardInterrupt as e:
         print()
         pass
-
