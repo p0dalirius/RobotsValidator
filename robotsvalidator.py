@@ -139,7 +139,7 @@ class RobotsTXT(object):
 
 
 def parseArgs():
-    print("RobotsValidator v1.2 - by @podalirius_\n")
+    print("RobotsValidator v1.2 - by Remi GASCOU (Podalirius)\n")
 
     parser = argparse.ArgumentParser(description="Description message")
     parser.add_argument("--debug", dest="debug", action="store_true", default=False, help="Debug mode.")
